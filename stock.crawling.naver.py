@@ -13,7 +13,7 @@ Safari/537.36'), }
 indexLabel = []
 valueList = []
 
-def find_maxPage(res) :
+def __findMaxPage(res) :
     if res.status_code == 200 :
         soup = BeautifulSoup(res.text, 'html.parser')
         last_Link = soup.find('table', { 'class' : 'Nnavi' }).find('td', { 'class' : 'pgRR' }).find(href=True)
@@ -21,13 +21,16 @@ def find_maxPage(res) :
     else :
         print(res.status_code, "ERROR in making soup")
 
-def getURL(code: int, page: int) :
+def __getURL(code: int, page: int) :
     return f"http://finance.naver.com/item/sise_day.naver?code={code}&page={page}"
 
+def getIndexLabel() :
+    return indexLabel
+
 def getStockData(stockCode) : 
-    maxPage = int(find_maxPage(requests.get(getURL(SAMSUNGCODE, 1), headers=HEADER)))
+    maxPage = int(__findMaxPage(requests.get(__getURL(SAMSUNGCODE, 1), headers=HEADER)))
     for i in range(1, maxPage+1, 1) :
-        res = requests.get(getURL(SAMSUNGCODE, i), headers=HEADER)
+        res = requests.get(__getURL(SAMSUNGCODE, i), headers=HEADER)
         soup = BeautifulSoup(res.text, 'html.parser')
     
         #For find index
