@@ -11,8 +11,12 @@ Safari/537.36'), }
 def __find_max_page(res) :
     if res.status_code == 200 :
         soup = BeautifulSoup(res.text, 'html.parser')
-        last_link = soup.find('table', { 'class' : 'Nnavi' }).find('td', { 'class' : 'pgRR' }).find(href=True)
-        return last_link['href'].split('page=')[1]
+        last_tr = soup.find('table', { 'class' : 'Nnavi' }).find('td', { 'class' : 'pgRR' })
+        if(last_tr == None or last_tr == {}):
+            return 1
+        else:
+            last_link = soup.find('table', { 'class' : 'Nnavi' }).find('td', { 'class' : 'pgRR' }).find(href=True)
+            return last_link['href'].split('page=')[1]
     else :
         print(res.status_code, "ERROR in making soup")
 
