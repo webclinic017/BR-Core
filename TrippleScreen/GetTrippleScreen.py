@@ -11,7 +11,7 @@ from mpl_finance import candlestick_ohlc
 from GetOptimalPortfolio import GetPriceModule
 
 mk = GetPriceModule.MarketDB()
-df = mk.get_daily_price('삼성전자', '2020-01-01')
+df = mk.get_daily_price('삼성전자', '2019-01-01')
 
 ema60 = df.close.ewm(span=60).mean()
 ema130 = df.close.ewm(span=130).mean()
