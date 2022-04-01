@@ -21,8 +21,8 @@ class MarketDB:
     
     def get_daily_price(self, code, start_date = None, end_date = None):
         if(start_date is None):
-            one_year_ago = datetime.today() - timedelta(days = 365)
-            start_date = one_year_ago.strftime('%Y-%m-%d')
+            three_year_ago = datetime.today() - timedelta(days = 1095)
+            start_date = three_year_ago.strftime('%Y-%m-%d')
             print("start_date is initialized to  '{}'".format(start_date))
         else:
             start_lst = re.split('\D+', start_date)
