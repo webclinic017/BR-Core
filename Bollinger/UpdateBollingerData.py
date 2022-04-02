@@ -53,13 +53,13 @@ class GetBollingerDataModule:
 
             try:
                 with open('config.json', 'r') as in_file:
-                config = json.load(in_file)
-                fetch_pages = config['fetch_pages']
+                    config = json.load(in_file)
+                    fetch_pages = config['fetch_pages']
             except FileNotFoundError:
                 with open('config.json', 'w') as out_file:
-                fetch_pages = -1
-                config = {'fetch_pages': 1}
-                json.dump(config, out_file)
+                    fetch_pages = -1
+                    config = {'fetch_pages': 1}
+                    json.dump(config, out_file)
                 
 
                 df = pd.DataFrame()
