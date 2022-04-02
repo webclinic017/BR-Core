@@ -41,7 +41,8 @@ class MarketDB:
                 print("start_day is wrong")
                 return
             start_date = f"{start_year:04d}-{start_month:02d}-{start_day:02d}"
-    
+            print(f"@@@@@@{start_date}")
+            
         if end_date is None:
             end_date = datetime.today().strftime('%Y-%m-%d')
             print(f"end_date is initialized to {end_date}")
@@ -73,6 +74,7 @@ class MarketDB:
         else:
             print("ValueError ::: Code({}) doesn't exist.".format(code))
 
+        print(f"CODE: {code}, START DATE: {start_date}, END DATE: {end_date}")
         sql = f"SELECT * FROM daily_price WHERE code = '{code}' and date >= '{start_date}' and date <= '{end_date}'"
         df = pd.read_sql(sql, self.conn)
         df.index = df['date']

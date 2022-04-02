@@ -63,6 +63,7 @@ class GetBollingerDataModule:
                     start_date = twenty_days_ago.strftime('%Y-%m-%d')
                     print(f"Not first time, get before 20 days: {start_date}")
                     df = mk.get_daily_price(code, start_date, None)
+                    print(df)
                 else: 
                     print(f"First time, get all day")
                     df = mk.get_daily_price(code, None, None)
