@@ -50,9 +50,27 @@ class GetBollingerDataModule:
             krx = UpdateDBModule.GetStockCodeModule().read_krx_code()
             for idx in range(len(krx)):
                 code = krx.code.values[idx]
-                print(f"@@@@@@@@{code}")
+
+            try:
+                with open('config.json', 'r') as in_file:
+                config = json.load(in_file)
+                fetch_pages = config['fetch_pages']
+            except FileNotFoundError:
+                with open('config.json', 'w') as out_file:
+                fetch_pages = -1
+                config = {'fetch_pages': 1}
+                json.dump(config, out_file)
+                
+
                 df = pd.DataFrame()
-                df = mk.get_daily_price(code, None, None)
+                if(fetch_pages == 1):
+                    twenty_days_ago = datetime.today() - timedelta(days = 21)
+                    start_date = twenty_days_ago.strftime('%Y-%m-%d')
+                    print(f"Not first time, get before 20 days: {start_date}")
+                    df = mk.get_daily_price(code, start_date, None)
+                else: 
+                    print(f"First time, get all day")
+                    df = mk.get_daily_price(code, None, None)
                 
                 df['MA20'] = df['close'].rolling(window=20).mean()
                 df['stddev'] = df['close'].rolling(window=20).std()
