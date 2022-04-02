@@ -59,7 +59,7 @@ class GetBollingerDataModule:
                     fetch_pages = -1
                 
                 df = pd.DataFrame()
-                if(fetch_pages == 1):
+                if(fetch_pages != 1):
                     twenty_days_ago = datetime.today() - timedelta(days = 45)
                     start_date = twenty_days_ago.strftime('%Y-%m-%d')
                     print(f"Not first time, get before 40 days: {start_date}")
@@ -71,8 +71,8 @@ class GetBollingerDataModule:
                 
                 df['MA20'] = df['close'].rolling(window=20).mean()
                 df['stddev'] = df['close'].rolling(window=20).std()
-                df['upper'] = df['MA20'] + (df['stddev'] * 20)
-                df['lower'] = df['MA20'] - (df['stddev'] * 20)
+                df['upper'] = df['MA20'] + (df['stddev'] * 2)
+                df['lower'] = df['MA20'] - (df['stddev'] * 2)
                 df['PB'] = (df['close'] - df['lower']) / (df['upper'] - df['lower'])
                 df['bandwidth'] = (df['upper'] - df['lower']) / df['MA20'] * 100
 
