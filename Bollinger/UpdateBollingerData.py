@@ -52,9 +52,9 @@ class GetBollingerDataModule:
                 code = krx.code.values[idx]
                 print("Check JSON file existence")
                 try:
-                    with open('config.json', 'r') as in_file:
+                    with open('../config.json', 'r') as in_file:
                         config = json.load(in_file)
-                        fetch_pages = -1
+                        fetch_pages = 1
                 except FileNotFoundError:
                     fetch_pages = -1
                 
@@ -96,11 +96,9 @@ class GetBollingerDataModule:
 
                 df = df.replace([np.inf, -np.inf])
                 df = df.dropna()
-                print(df)
                 with self.conn.cursor() as curs:
                     for r in df.itertuples():
                         sql = f"REPLACE INTO bollinger_info VALUES ('{code}', '{r.date}', '{r.MA20}', '{r.stddev}','{r.upper}', '{r.lower}', '{r.PB}', '{r.bandwidth}', '{r.MFI10}')"
-                        print(f"REPLACE INTO bollinger_info VALUES ('{code}', '{r.date}', '{r.MA20}', '{r.stddev}','{r.upper}', '{r.lower}', '{r.PB}', '{r.bandwidth}', '{r.MFI10}')")
                         curs.execute(sql)
                     self.conn.commit()
                     print('[{}] #{} : {} rows > REPLACE INTO init_bollingerdata_into_DB [OK]'.format(datetime.now().strftime('%Y-%m-%d %H:%M'), code, len(df)))
