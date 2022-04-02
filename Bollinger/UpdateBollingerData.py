@@ -51,22 +51,27 @@ class GetBollingerDataModule:
             for idx in range(len(krx)):
                 code = krx.code.values[idx]
                 print("Check JSON file existence")
-                try:
-                    with open('config.json', 'r') as in_file:
-                        fetch_pages = 1
-                except FileNotFoundError:
-                    fetch_pages = -1
+                # try:
+                #     with open('config.json', 'r') as in_file:
+                #         fetch_pages = 1
+                # except FileNotFoundError:
+                #     fetch_pages = -1
                 
-                df = pd.DataFrame()
-                if(fetch_pages != -1):
-                    twenty_days_ago = datetime.today() - timedelta(days = 21)
-                    start_date = twenty_days_ago.strftime('%Y-%m-%d')
-                    print(f"Not first time, get before 20 days: {start_date}")
-                    df = mk.get_daily_price(code, start_date, None)
-                    print(df)
-                else: 
-                    print(f"First time, get all day")
-                    df = mk.get_daily_price(code, None, None)
+                # df = pd.DataFrame()
+                # if(fetch_pages != -1):
+                #     twenty_days_ago = datetime.today() - timedelta(days = 21)
+                #     start_date = twenty_days_ago.strftime('%Y-%m-%d')
+                #     print(f"Not first time, get before 20 days: {start_date}")
+                #     df = mk.get_daily_price(code, start_date, None)
+                #     print(df)
+                # else: 
+                #     print(f"First time, get all day")
+                #     df = mk.get_daily_price(code, None, None)
+                twenty_days_ago = datetime.today() - timedelta(days = 21)
+                start_date = twenty_days_ago.strftime('%Y-%m-%d')
+                print(f"Not first time, get before 20 days: {start_date}")
+                df = mk.get_daily_price(code, start_date, None)
+                print(df)
                 
                 df['MA20'] = df['close'].rolling(window=20).mean()
                 df['stddev'] = df['close'].rolling(window=20).std()
@@ -95,9 +100,11 @@ class GetBollingerDataModule:
 
                 df = df.replace([np.inf, -np.inf])
                 df = df.dropna()
+                print(df)
                 with self.conn.cursor() as curs:
                     for r in df.itertuples():
                         sql = f"REPLACE INTO bollinger_info VALUES ('{code}', '{r.date}', '{r.MA20}', '{r.stddev}','{r.upper}', '{r.lower}', '{r.PB}', '{r.bandwidth}', '{r.MFI10}')"
+                        print(f"REPLACE INTO bollinger_info VALUES ('{code}', '{r.date}', '{r.MA20}', '{r.stddev}','{r.upper}', '{r.lower}', '{r.PB}', '{r.bandwidth}', '{r.MFI10}')")
                         curs.execute(sql)
                     self.conn.commit()
                     print('[{}] #{} : {} rows > REPLACE INTO init_bollingerdata_into_DB [OK]'.format(datetime.now().strftime('%Y-%m-%d %H:%M'), code, len(df)))
