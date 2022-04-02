@@ -50,12 +50,11 @@ class GetBollingerDataModule:
             krx = UpdateDBModule.GetStockCodeModule().read_krx_code()
             for idx in range(len(krx)):
                 code = krx.code.values[idx]
-
-            try:
-                with open('config.json', 'r') as in_file:
-                    fetch_pages = 1
-            except FileNotFoundError:
-                with open('config.json', 'w') as out_file:
+                print("Check JSON file existence")
+                try:
+                    with open('config.json', 'r') as in_file:
+                        fetch_pages = 1
+                except FileNotFoundError:
                     fetch_pages = -1
                 
                 df = pd.DataFrame()
