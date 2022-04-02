@@ -41,7 +41,6 @@ class MarketDB:
                 print("start_day is wrong")
                 return
             start_date = f"{start_year:04d}-{start_month:02d}-{start_day:02d}"
-            print(f"@@@@@@{start_date}")
             
         if end_date is None:
             end_date = datetime.today().strftime('%Y-%m-%d')
