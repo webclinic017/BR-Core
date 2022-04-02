@@ -1,12 +1,12 @@
 import numpy as np
 import pymysql
 import pandas as pd
-from datetime import datetime
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from GetOptimalPortfolio import GetPriceModule
 from GetStockAndUpateDB import UpdateDBModule
 import json
+from datetime import timedelta, datetime
 
 class GetBollingerDataModule:
     def __init__(self):
@@ -53,17 +53,13 @@ class GetBollingerDataModule:
 
             try:
                 with open('config.json', 'r') as in_file:
-                    config = json.load(in_file)
-                    fetch_pages = config['fetch_pages']
+                    fetch_pages = 1
             except FileNotFoundError:
                 with open('config.json', 'w') as out_file:
                     fetch_pages = -1
-                    config = {'fetch_pages': 1}
-                    json.dump(config, out_file)
                 
-
                 df = pd.DataFrame()
-                if(fetch_pages == 1):
+                if(fetch_pages != -1):
                     twenty_days_ago = datetime.today() - timedelta(days = 21)
                     start_date = twenty_days_ago.strftime('%Y-%m-%d')
                     print(f"Not first time, get before 20 days: {start_date}")
