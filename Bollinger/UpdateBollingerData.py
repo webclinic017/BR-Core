@@ -2,7 +2,6 @@ import numpy as np
 import pymysql
 import pandas as pd
 from datetime import datetime
-import matplotlib.pyplot as plt
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from GetOptimalPortfolio import GetPriceModule
