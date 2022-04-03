@@ -24,6 +24,7 @@ class GetBollingerDataModule:
                 pb FLOAT,
                 bandwitdh FLOAT,
                 mfi10 FLOAT,
+                iip21 FLOAT,
                 PRIMARY KEY (code,date)      
             )
             """
@@ -97,7 +98,7 @@ class GetBollingerDataModule:
                 df = df.dropna()
                 with self.conn.cursor() as curs:
                     for r in df.itertuples():
-                        sql = f"REPLACE INTO bollinger_info VALUES ('{code}', '{r.date}', '{r.MA20}', '{r.stddev}','{r.upper}', '{r.lower}', '{r.PB}', '{r.bandwidth}', '{r.MFI10}')"
+                        sql = f"REPLACE INTO bollinger_info VALUES ('{code}', '{r.date}', '{r.MA20}', '{r.stddev}','{r.upper}', '{r.lower}', '{r.PB}', '{r.bandwidth}', '{r.MFI10}', '{r.IIP21}')"
                         curs.execute(sql)
                     self.conn.commit()
                     print('[{}] #{} : {} rows > REPLACE INTO init_bollingerdata_into_DB [OK]'.format(datetime.now().strftime('%Y-%m-%d %H:%M'), code, len(df)))
