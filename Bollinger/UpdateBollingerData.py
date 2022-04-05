@@ -29,20 +29,32 @@ class GetBollingerDataModule:
             )
             """
             curs.execute(sql) 
+
+            sql = """
+            CREATE TABLE IF NOT EXISTS signal_bollinger_trend (
+                code VARCHAR(20),
+                date DATE,
+                type VARCHAR(20),
+                PRIMARY KEY (code,date)      
+            )
+            """
+            curs.execute(sql) 
+
+            sql = """
+            CREATE TABLE IF NOT EXISTS signal_bollinger_reverse (
+                code VARCHAR(20),
+                date DATE,
+                type VARCHAR(20),
+                PRIMARY KEY (code,date)      
+            )
+            """
+            curs.execute(sql) 
+
         self.conn.commit()
         self.codes = dict()
     
     def __del__(self):
         self.conn.close()
-
-    def replace_bollingerdata_into_DB(self, df, num, code, company):
-        print(f"replace_bollingerdata_into_DB START, company :: {company}")
-        with self.conn.cursor() as curs:
-            for r in df.itertuples():
-                sql = f"REPLACE INTO daily_price VALUES ('{code}', '{r.date}', '{r.open}','{r.high}', '{r.low}', '{df.pb}', '{r.diff}', '{r.volume}')"
-                curs.execute(sql)
-            self.conn.commit()
-            print('[{}] #{:04d} {} ({}) : {} rows > REPLACE INTO daily_price [OK]'.format(datetime.now().strftime('%Y-%m-%d %H:%M'), num+1, company, code, len(df)))
 
     def init_bollingerdata_into_DB(self):
         print(f"init_bollingerdata_into_DB START")
@@ -54,7 +66,6 @@ class GetBollingerDataModule:
                 print("Check JSON file existence")
                 try:
                     with open('../config.json', 'r') as in_file:
-                        config = json.load(in_file)
                         fetch_pages = 1
                 except FileNotFoundError:
                     fetch_pages = -1
@@ -103,6 +114,40 @@ class GetBollingerDataModule:
                     self.conn.commit()
                     print('[{}] #{} : {} rows > REPLACE INTO init_bollingerdata_into_DB [OK]'.format(datetime.now().strftime('%Y-%m-%d %H:%M'), code, len(df)))
 
-            # print('[{}] #{:04d} ({}) : {} rows > REPLACE INTO bollinger_info [OK]'.format(datetime.now().strftime('%Y-%m-%d %H:%M'), code, len(df)))
+                
+                for i in range(len(df.close)):
+                    if df.PB.values[i] > 0.8 and df.MFI10.values[i] > 80:
+                        signal = "buy"
+                        type = "signal_bollinger_trend"
+                        with self.conn.cursor() as curs:
+                            print(f"@@@@@@@@@@BUY SIGNAL@@@@@@@@ - {code} - {df.date.values[i]} - {type} - {signal}")
+                            sql = f"REPLACE INTO '{type}' VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
+                            curs.execute(sql)
+                            self.conn.commit()
+                    elif df.PB.values[i] < 0.2 and df.MFI10.values[i] < 20:
+                        signal = "sell"
+                        type = "signal_bollinger_trend"
+                        with self.conn.cursor() as curs:
+                            print(f"@@@@@@@@@@SELL SIGNAL@@@@@@@@ - {code} - {df.date.values[i]} - {type} - {signal}")
+                            sql = f"REPLACE INTO '{type}' VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
+                            curs.execute(sql)
+                            self.conn.commit()
+
+                    if df.PB.values[i] < 0.05 and df.IIP21.values[i] > 0:
+                        signal = "buy"
+                        type = "signal_bollinger_reverse"
+                        with self.conn.cursor() as curs:
+                            print(f"@@@@@@@@@@BUY SIGNAL@@@@@@@@ - {code} - {df.date.values[i]} - {type} - {signal}")
+                            sql = f"REPLACE INTO '{type}' VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
+                            curs.execute(sql)
+                            self.conn.conmmit()
+                    elif df.PB.values[i] > 0.95 and df.IIP21.values[i] < 0:
+                        signal = "sell"
+                        type = "signal_bollinger_reverse"
+                        with self.conn.cursor() as curs:
+                            print(f"@@@@@@@@@@SELL SIGNAL@@@@@@@@ - {code} - {df.date.values[i]} - {type} - {signal}")
+                            sql = f"REPLACE INTO '{type}' VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
+                            curs.execute(sql)
+                            self.conn.commit()
 
 a = GetBollingerDataModule().init_bollingerdata_into_DB()
