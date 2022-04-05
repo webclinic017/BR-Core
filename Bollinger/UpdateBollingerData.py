@@ -121,7 +121,7 @@ class GetBollingerDataModule:
                         type = "signal_bollinger_trend"
                         with self.conn.cursor() as curs:
                             print(f"@@@@@@@@@@BUY SIGNAL@@@@@@@@ - {code} - {df.date.values[i]} - {type} - {signal}")
-                            sql = f"REPLACE INTO '{type}' VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
+                            sql = f"REPLACE INTO {type} VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
                             curs.execute(sql)
                             self.conn.commit()
                     elif df.PB.values[i] < 0.2 and df.MFI10.values[i] < 20:
@@ -129,7 +129,7 @@ class GetBollingerDataModule:
                         type = "signal_bollinger_trend"
                         with self.conn.cursor() as curs:
                             print(f"@@@@@@@@@@SELL SIGNAL@@@@@@@@ - {code} - {df.date.values[i]} - {type} - {signal}")
-                            sql = f"REPLACE INTO '{type}' VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
+                            sql = f"REPLACE INTO {type} VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
                             curs.execute(sql)
                             self.conn.commit()
 
@@ -138,15 +138,15 @@ class GetBollingerDataModule:
                         type = "signal_bollinger_reverse"
                         with self.conn.cursor() as curs:
                             print(f"@@@@@@@@@@BUY SIGNAL@@@@@@@@ - {code} - {df.date.values[i]} - {type} - {signal}")
-                            sql = f"REPLACE INTO '{type}' VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
+                            sql = f"REPLACE INTO {type} VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
                             curs.execute(sql)
-                            self.conn.conmmit()
+                            self.conn.commit()
                     elif df.PB.values[i] > 0.95 and df.IIP21.values[i] < 0:
                         signal = "sell"
                         type = "signal_bollinger_reverse"
                         with self.conn.cursor() as curs:
                             print(f"@@@@@@@@@@SELL SIGNAL@@@@@@@@ - {code} - {df.date.values[i]} - {type} - {signal}")
-                            sql = f"REPLACE INTO '{type}' VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
+                            sql = f"REPLACE INTO {type} VALUES ('{code}', '{df.date.values[i]}', '{signal}')"
                             curs.execute(sql)
                             self.conn.commit()
 
