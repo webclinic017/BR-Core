@@ -58,23 +58,26 @@ class GetBollingerDataModule:
 
     def init_bollingerdata_into_DB(self):
         print(f"init_bollingerdata_into_DB START")
+        try:
+            with open('../config.json', 'r') as in_file:
+                fetch_pages = 1
+        except FileNotFoundError:
+            with open('config.json', 'w') as out_file:
+                fetch_pages = -1
+                config = {'fetch_pages': 1}
+                json.dump(config, out_file)
+                
         with self.conn.cursor() as curs:
             mk = GetPriceModule.MarketDB()
             krx = UpdateDBModule.GetStockCodeModule().read_krx_code()
             for idx in range(len(krx)):
                 code = krx.code.values[idx]
                 print("Check JSON file existence")
-                try:
-                    with open('../config.json', 'r') as in_file:
-                        fetch_pages = 1
-                except FileNotFoundError:
-                    fetch_pages = -1
-                
                 df = pd.DataFrame()
-                if(fetch_pages != 1):
-                    twenty_days_ago = datetime.today() - timedelta(days = 45)
+                if(fetch_pages == 1):
+                    twenty_days_ago = datetime.today() - timedelta(days = 70)
                     start_date = twenty_days_ago.strftime('%Y-%m-%d')
-                    print(f"Not first time, get before 40 days: {start_date}")
+                    print(f"Not first time, get before 2 month: {start_date}")
                     df = mk.get_daily_price(code, start_date, None)
                 else: 
                     print(f"First time, get all day")
